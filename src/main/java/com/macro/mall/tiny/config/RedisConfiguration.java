@@ -15,6 +15,5 @@ public class RedisConfiguration {
     @Bean
     public CacheManager cacheManager(RedisTemplate  redisTemplate) {
         return new RedisCacheManager(redisTemplate);
-
     }
 }
