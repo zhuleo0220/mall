@@ -32,7 +32,7 @@ public class OrderController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
 
-    @ApiOperation("获取所以品牌列表")
+    @ApiOperation("获取所以订单列表")
     @RequestMapping(value = "listAll", method = RequestMethod.GET)
     public String getOrderList(Model m, @RequestParam(value = "start", defaultValue = "0") int start, @RequestParam(value = "size", defaultValue = "5") int size) throws Exception {
         PageHelper.startPage(start,size,"id desc");
@@ -42,7 +42,7 @@ public class OrderController {
         return "order/listOrder";
     }
 
-    @ApiOperation("添加品牌")
+    @ApiOperation("添加订单")
     @RequestMapping(value ="add",method = RequestMethod.POST)
     public String add(Order order ){
         order.setCreatedate(new Date());
@@ -52,7 +52,7 @@ public class OrderController {
         return "redirect:listAll";
     }
 
-    @ApiOperation("删除指定id的品牌")
+    @ApiOperation("删除指定id的订单")
     @RequestMapping(value ="delete",method = RequestMethod.GET)
     public String delete(Long id){
         orderService.deleteOrder(id);
@@ -67,7 +67,7 @@ public class OrderController {
 
     }
 
-    @ApiOperation("更新指定id品牌信息")
+    @ApiOperation("更新指定id订单信息")
     @RequestMapping(value ="update",method = RequestMethod.POST)
     public String update(Order order){
         orderService.updateOrder(Long.valueOf(order.getId()),order);

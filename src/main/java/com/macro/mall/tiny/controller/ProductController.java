@@ -12,12 +12,10 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -46,35 +44,42 @@ public class ProductController {
     }
 
     @ApiOperation("添加品牌")
-    @RequestMapping(value ="add",method = RequestMethod.POST)
-    public String add(Product product ){
+    @RequestMapping(value ="create",method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult create(@RequestBody Product product){
         product.setCreatedate(new Date());
-        demoService.createProduct(product);
-        return "redirect:listAll";
+        int count = demoService.createProduct(product);
+        if(count >0){
+            return CommonResult.success(count);
+        } else {
+            return CommonResult.failed();
+        }
     }
 
     @ApiOperation("删除指定id的品牌")
-    @RequestMapping(value ="delete",method = RequestMethod.GET)
-    public String delete(Long id){
-        demoService.deleteProduct(id);
-        return "redirect:listAll";
+    @RequestMapping(value ="delete/{id}",method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult delete(@PathVariable Long id){
+       int count= demoService.deleteProduct(id);
+        if (count>0){
+            return CommonResult.success(count);
+
+        } else{
+            return CommonResult.failed();
+        }
     }
 
-    @RequestMapping(value ="edit")
-    public String edit(Long id,Model model) {
-        Product pb=demoService.getProduct(id);
-        model.addAttribute("pb",pb);
-        return "product/updateProduct";
 
-    }
 
     @ApiOperation("更新指定id品牌信息")
-    @RequestMapping(value ="update",method = RequestMethod.POST)
-    public String update(Product product){
-        System.out.println(product.getId());
-        System.out.println(product);
-        demoService.updateProduct(Long.valueOf(product.getId()),product);
-        return "redirect:listAll";
+    @RequestMapping(value ="update/{id}",method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult update(@PathVariable Long id , @RequestBody Product product){
+        int count =demoService.updateProduct(Long.valueOf(product.getId()),product);
+
+            return CommonResult.success(count);
+
+
     }
 
 

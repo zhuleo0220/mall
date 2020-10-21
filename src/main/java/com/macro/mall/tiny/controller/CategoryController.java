@@ -33,44 +33,59 @@ public class CategoryController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryController.class);
 
-    @ApiOperation("获取所以品牌列表")
-    @RequestMapping(value = "listAll", method = RequestMethod.GET)
+    @ApiOperation("获取分类列表")
+    @RequestMapping(value = "list", method = RequestMethod.GET)
     @ResponseBody
     public CommonResult<CommonPage<Category>> getList(@RequestParam(value = "pageSize", defaultValue = "5") Integer pageSize, @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum) {
         List<Category> productCategoryList = demoService.listCategory(pageNum,pageSize);
         return CommonResult.success(CommonPage.restPage(productCategoryList));
     }
+    @ApiOperation("获取所有分类列表")
+    @RequestMapping(value = "listAll", method = RequestMethod.GET)
+    @ResponseBody
+    public CommonResult<List<Category>> getListAll() {
+        List<Category> productCategoryList = demoService.listAllCategory();
+        return CommonResult.success(productCategoryList);
+    }
 
     @ApiOperation("添加品牌")
     @RequestMapping(value ="add",method = RequestMethod.POST)
-    public String add(Category category){
-        demoService.createCategory(category);
-        return "redirect:listAll";
+    @ResponseBody
+    public CommonResult add(@RequestBody Category category){
+        System.out.println(category);
+        int count = demoService.createCategory(category);
+        if(count>0){
+            return CommonResult.success(count);
+        } else {
+            return CommonResult.failed();
+        }
+
     }
 
     @ApiOperation("删除指定id的品牌")
-    @RequestMapping(value ="delete",method = RequestMethod.GET)
-    public String delete(Long id){
-        demoService.deleteCategory(id);
-        return "redirect:listAll";
+    @RequestMapping(value ="delete/{id}",method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult delete(@PathVariable Long id){
+        int count = demoService.deleteCategory(id);
+        if(count > 0){
+            return CommonResult.success(count);
+        } else {
+            return CommonResult.failed();
+        }
     }
 
-    @RequestMapping(value ="edit")
-    public String edit(Long id,Model model) {
-        Category pb=demoService.getCategory(id);
-        model.addAttribute("pb",pb);
-        return "category/updateCategory";
+    @RequestMapping(value ="update/{id}",method = RequestMethod.POST)
+    @ResponseBody
+    public CommonResult update(@PathVariable Long id,@RequestBody Category category) {
+        int count = demoService.updateCategory(id, category);
+        if (count > 0) {
+            return CommonResult.success(count);
+        } else {
+            return CommonResult.failed();
+        }
 
     }
 
-    @ApiOperation("更新指定id品牌信息")
-    @RequestMapping(value ="update",method = RequestMethod.POST)
-    public String update(Category category){
-        System.out.println(category.getId());
-        System.out.println(category);
-        demoService.updateCategory(Long.valueOf(category.getId()),category);
-        return "redirect:listAll";
-    }
 
 
 
